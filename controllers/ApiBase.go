@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/astaxie/beego"
-	"fmt"
+	"time"
 )
 
 type ApiBase struct {
@@ -15,7 +15,7 @@ func (this *ApiBase) init()  {
 /**
  * 校验IP(暂未开放)
  */
-func checkIPs() (bool)  {
+func checkIP() (bool)  {
 	return true
 }
 
@@ -29,6 +29,18 @@ func checkSecret(this *ApiBase) int {
 	if secret == "" {
 		return 20000
 	}
-	fmt.Println(secret)
 	return 20111
+}
+
+func (this *ApiBase) ResultJson(code int, msg string, data ...interface{}) interface{} {
+	result := make(map[string]interface{})
+	result["code"] = code
+	result["msg"]  = msg
+	result["time"] = time.Now().Unix()
+
+	if len(data) > 0 && data[0] != nil {
+		result["data"] = data[0]
+	}
+
+	return this.Ctx.Output.JSON(result, true, false)
 }
