@@ -29,15 +29,25 @@ func (this *YiqingController) GetCityList() {
 	//接受参数
 	id, err := this.GetInt("id")
 
-	if err != nil {
-		this.ResultJson(10105, "参数有问题")
-	}
-
 	o := orm.NewOrm()
 	yiqing := models.YiQingCity{}
-	yiqing.Id = id
+	if err != nil {
+		this.ResultJson(10105, "参数有问题")
+	} else{
+		yiqing.Id = id
+		//beego.Info("id:",id)
+	}
+	country_id, err := this.GetInt("countrie_id")
+
+	if err != nil {
+		this.ResultJson(10105, "参数有问题")
+	} else{
+		beego.Info("country_id:",country_id)
+		yiqing.Countrie_id = country_id
+	}
 
 	yiqingerr := o.Read(&yiqing)
+	beego.Info("yiqing:",yiqing)
 	if yiqingerr != nil {
 		this.ResultJson(10104, "数据库查询失败")
 	} else {
