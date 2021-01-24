@@ -6,6 +6,7 @@ import (
 )
 
 func init() {
-    beego.Router("/", &controllers.MainController{})
-	beego.Router("/api/yiqing/get_city_list", &controllers.YiqingController{},"post:GetCityList")
+	beego.Router("/", &controllers.MainController{})
+	beego.Router("/api/yiqing/get_city_list", &controllers.YiqingController{}, "post:GetCityList")
+	beego.Router("/api/yiqing/get_coordinate", &controllers.YiqingController{}, "post:GetCoordinate")
 }

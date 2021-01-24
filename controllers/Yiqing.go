@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"api.cb2020.tdedu.org/common"
 	"api.cb2020.tdedu.org/models/yi_qing_city"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"io/ioutil"
 )
 
 type YiqingController struct {
@@ -57,6 +59,11 @@ func (this *YiqingController) GetCityId() {
 	//this.ServeJSON()
 }
 
+/**
+ * 获取国家城市对应数据
+ * @param int $country 留学国家 1293 美国
+ * @param int $option  数据选项 1 全部列表数据 按照累计人数倒叙  2 只要地图坐标数据
+ */
 func (this *YiqingController) GetCityList() {
 	//验证IP
 	checkIPRes := checkIP()
@@ -93,4 +100,41 @@ func (this *YiqingController) GetCityList() {
 		this.ResultJson(0, "成功", yiqing)
 	}
 	//this.ServeJSON()
+}
+
+/**
+ * 获取疫情国家坐标
+ * @param int $ct_name 留学国家名称
+ * @return boolean|array
+ * @author ligt
+ * @return json
+ */
+func (c *YiqingController) GetCoordinate() {
+	//验证IP
+	checkIPRes := checkIP()
+	if checkIPRes == false {
+		c.ResultJson(10102, "验证ip不通过")
+	}
+	//验证参数
+	secret := c.GetString("secret")
+	if secret == "" {
+		c.ResultJson(10101, "secret不能为空")
+
+	} else if secret != beego.AppConfig.String("secret") {
+		c.ResultJson(10102, "secret错误")
+	}
+	//接受参数
+	ct_name := c.GetString("ct_name")
+	if ct_name == "" {
+		c.ResultJson(10009, "参数不能为空")
+	}
+	currentDir := common.GetCurrentDirectory()
+	path := currentDir + "/data/" + ct_name + ".json"
+	beego.Info("path", path)
+	data, err := ioutil.ReadFile(path)
+	beego.Info("data", data)
+	if err != nil {
+		c.ResultJson(10009, "参数不能有问题")
+	}
+	c.ResultJson(0, "成功", data)
 }
